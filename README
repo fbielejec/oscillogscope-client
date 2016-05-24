@@ -1,0 +1,25 @@
+LICENSE
+-------
+
+GNU Lesser General Public License v3.0
+ 
+ PURPOSE
+ -------
+Frontend for Oscillogscope
+ 
+ USING
+ ----- 
+ * DEV
+  npm install
+  npm start
+  Point your browser to http://localhost:8080
+ * DIST
+  npm install
+  npm run production
+
+ TESTING
+ ----- 
+ * Frontend
+ npm run test
+ * with backend
+ ./test_client

@@ -1,0 +1,28 @@
+#!/bin/bash
+
+SERVER_LOCATION=/home/filip/Dropbox/JavaProjects/oscillogscope
+
+#################
+#---FUNCTIONS---#
+#################
+
+function run_server {
+
+cd $SERVER_LOCATION
+
+heroku local web
+
+}
+
+##############
+#---SCRIPT---#
+##############
+
+npm run dist
+
+cp dist/index.html $SERVER_LOCATION/src/main/resources/webapp/index.html
+cp dist/bundle.js $SERVER_LOCATION//src/main/resources/webapp/bundle.js
+
+run_server
+
+exit 0
