@@ -1,3 +1,12 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  font-family: sans-serif;
+  color: #5F5F5F;
+}
+
 .container {
   width: 100%;
 }
@@ -5,4 +14,13 @@
 .innerContainer {
   max-width: 900px;
   margin: 0px auto;
+}
+
+.header {
+  justify-content: space-between;
+  align-items: center;
+  display: flex;
+  background-color: rgb(0, 0, 0);
+  color: white;
+  padding: 5;
 }
