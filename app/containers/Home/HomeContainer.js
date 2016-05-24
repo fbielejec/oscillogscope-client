@@ -8,11 +8,25 @@ import {WatchLog} from 'components';
  */
 const HomeContainer = React.createClass({
 
+handleWatch(event) {
+
+  event.preventDefault();
+
+  var file = event.target.files[0];
+  if (!file) {
+    return;
+  }
+
+console.log(file);
+
+
+},
+
   render() {
     return (
       <div className = {container}>
 
-             <WatchLog/>
+             <WatchLog handleClick={this.handleWatch}/>
 
       </div>
     );

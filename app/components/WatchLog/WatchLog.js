@@ -1,23 +1,31 @@
 import React, {PropTypes} from 'react'
 import { button, container } from './styles.css'
 
+import { FileInput } from 'components'
+
 /**
  * @fbielejec
  */
 const WatchLog = React.createClass({
 
-  // PropTypes: {
-  //   isFetching : PropTypes.bool,
-  //   handleClick : PropTypes.func,
-  // },
+  PropTypes: {
+    handleClick : PropTypes.func,
+  },
 
   render: function() {
     return (
-      <div className={container}>
-      <button className={button}>
-      {'Select log file to watch'}
-    </button>
-  </div>
+
+<div className={container}>
+
+      <FileInput
+        name="Trees file"
+        accept=".*"
+        placeholder="Select log file to watch"
+        className={button}
+        onChange={this.props.handleClick}/>
+
+    </div>
+
     );
   }
 
