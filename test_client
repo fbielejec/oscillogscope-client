@@ -10,7 +10,9 @@ function run_server {
 
 cd $SERVER_LOCATION
 
-heroku local web
+mvn package
+
+heroku local web -p 8080
 
 }
 
@@ -18,10 +20,10 @@ heroku local web
 #---SCRIPT---#
 ##############
 
-npm run dist
+npm run production
 
 cp dist/index.html $SERVER_LOCATION/src/main/resources/webapp/index.html
-cp dist/bundle.js $SERVER_LOCATION//src/main/resources/webapp/bundle.js
+cp dist/index_bundle.js $SERVER_LOCATION//src/main/resources/webapp/index_bundle.js
 
 run_server
 

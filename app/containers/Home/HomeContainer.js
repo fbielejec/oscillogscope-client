@@ -1,5 +1,7 @@
 import React, {PropTypes} from 'react';
-import {Home} from 'components'
+import { container } from './styles.css'
+
+import {WatchLog} from 'components';
 
 /**
  * @fbielejec
@@ -8,7 +10,11 @@ const HomeContainer = React.createClass({
 
   render() {
     return (
-      <Home />
+      <div className = {container}>
+
+             <WatchLog/>
+
+      </div>
     );
   }
 
