@@ -1,4 +1,3 @@
-
 function scrapeColumnNames(lines) {
   var colnames = lines.filter((line) => {
     return !line.beginsWith('#');
@@ -6,7 +5,19 @@ function scrapeColumnNames(lines) {
     return name.replace(ILLEGAL_CHARACTER, SUBSTITUTE_CHARACTER);
   });
 
-return colnames;
+  return colnames;
 }
 
-export { scrapeColumnNames };
+function makeRowMap(colnames, values) {
+  const rowMap = colnames.reduce(function(previous, element, i, array) {
+    previous[element] = values[i];
+    return previous;
+  }, {});
+
+  return rowMap;
+}
+
+export {
+  scrapeColumnNames,
+  makeRowMap
+};
