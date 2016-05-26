@@ -3,10 +3,16 @@ import { container } from './styles.css'
 
 import {WatchLog} from 'components';
 import {rootURL, postColnames} from 'helpers/server';
+import {scrapeColumnNames} from 'helpers/utils';
 
 /**
  * @fbielejec
- */String.prototype.beginsWith = function(string) {
+ */
+
+const ILLEGAL_CHARACTER = ".";
+const SUBSTITUTE_CHARACTER = "_";
+
+ String.prototype.beginsWith = function(string) {
   return (this.indexOf(string) === 0);
 };
 
@@ -14,6 +20,12 @@ const HomeContainer = React.createClass({
 
       PropTypes: {
 
+      },
+
+      getInitialState() {
+        return {
+          colnames: [],
+        };
       },
 
       handleWatch(event) {
@@ -33,21 +45,32 @@ const HomeContainer = React.createClass({
             var lines = content.split('\n');
 
             // get the column names
-            var colnames = lines.filter((line) => {
-            return !line.beginsWith('#');
-            })[0].split(/\s+/);
+            var colnames = scrapeColumnNames(lines);
 
+            // post colnames, set state
+            var self = this;
             postColnames(colnames).then((response) => {
                 console.log(response);
+                self.setState({
+                  colnames: colnames,
+                });
               })
               .catch((response) => {
                 console.log(response);
               });
 
-            // for (var line = 0; line < lines.length; line++) {
-            //   console.log(lines[line]);
-            // }
+          // post content, line by line
+          lines.filter((line) => {
+            return !line.beginsWith('#');
+          }) //
+          .slice(1, lines.length) // skip line with colnames
+          .map((line, i) => {
 
+          var row = line.split(/\s+/);
+
+                console.log(row);
+
+          });
 
 
 

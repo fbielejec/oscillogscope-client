@@ -5,7 +5,7 @@
   "license": "GNU LGPL",
   "main": "index.js",
   "scripts": {
-    "test": "Tests not implemented",
+    "test": "mocha --compilers js:babel-core/register,css:test/css-null-compiler.js --recursive --reporter nyan test/*.js",
     "lint": "eslint --ext .jsx --ext .js app; exit 0",
     "fix": "eslint --fix --ext .jsx --ext .js app; exit 0",
     "start": "webpack-dev-server",
@@ -36,6 +36,14 @@
     "html-webpack-plugin": "^2.15.0",
     "style-loader": "^0.13.1",
     "webpack": "^1.13.0",
-    "webpack-dev-server": "^1.14.1"
+    "webpack-dev-server": "^1.14.1",
+
+    "mocha": "^2.4.5",
+    "chai": "^3.5.0",
+    "istanbul": "^0.4.3",
+    "jsdom": ">= 0.1.23 < 4.0.0",
+    "nock": "^8.0.0",
+    "react-addons-test-utils": "^15.0.1"
+
   }
 }
