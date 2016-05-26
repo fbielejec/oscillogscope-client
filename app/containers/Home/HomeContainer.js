@@ -2,49 +2,62 @@ import React, {PropTypes} from 'react';
 import { container } from './styles.css'
 
 import {WatchLog} from 'components';
+import {rootURL, postColnames} from 'helpers/server';
 
 /**
  * @fbielejec
- */
+ */String.prototype.beginsWith = function(string) {
+  return (this.indexOf(string) === 0);
+};
+
 const HomeContainer = React.createClass({
 
-handleWatch(event) {
+      PropTypes: {
 
-  event.preventDefault();
+      },
 
-  var file = event.target.files[0];
-  if (!file) {
-    return;
-  }
+      handleWatch(event) {
+        event.preventDefault();
 
-  var reader = new FileReader();
-  reader.readAsText(file, 'UTF-8');
-  var self = this;
+        var file = event.target.files[0];
+        if (!file) {
+          return;
+        }
 
-  reader.onload = function(e) {
-      var content = e.target.result;
-      // Entire file
-      // console.log(content);
+        var reader = new FileReader();
+        reader.readAsText(file, 'UTF-8');
+        var self = this;
 
-      // By lines
-      var lines = content.split('\n');
-  // console.log(lines[2]);
-      for (var line = 0; line < lines.length; line++) {
-        console.log(lines[line]);
-      }
+        reader.onload = function(e) {
+            var content = e.target.result;
+            var lines = content.split('\n');
 
-// TODO: read and send column names server-side (server created db)
+            // get the column names
+            var colnames = lines.filter((line) => {
+            return !line.beginsWith('#');
+            })[0].split(/\s+/);
+
+            postColnames(colnames).then((response) => {
+                console.log(response);
+              })
+              .catch((response) => {
+                console.log(response);
+              });
+
+            // for (var line = 0; line < lines.length; line++) {
+            //   console.log(lines[line]);
+            // }
 
 
-    } //END: onLoad
-},
 
-  render() {
+
+          } //END: onLoad
+      },
+
+      render() {
     return (
       <div className = {container}>
-
              <WatchLog handleClick={this.handleWatch}/>
-
       </div>
     );
   }
