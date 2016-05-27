@@ -9,8 +9,6 @@ const routes = (
   <Router history={hashHistory}>
     <Router path='/' component={MainContainer}>
 
-
-
       <IndexRoute component={HomeContainer}/>
     </Router>
   </Router>

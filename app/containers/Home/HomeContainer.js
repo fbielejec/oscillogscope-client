@@ -2,85 +2,86 @@ import React, {PropTypes} from 'react';
 import { container } from './styles.css'
 
 import {WatchLog} from 'components';
-import {rootURL, postColnames} from 'helpers/server';
-import {scrapeColumnNames} from 'helpers/utils';
-
+import {rootURL, postDatabaseCreate, postDatabaseInsert} from 'helpers/server';
+import {scrapeColumnNames, makeRowMap} from 'helpers/utils';
 /**
  * @fbielejec
  */
 
-const ILLEGAL_CHARACTER = ".";
-const SUBSTITUTE_CHARACTER = "_";
-
- String.prototype.beginsWith = function(string) {
+String.prototype.beginsWith = function(string) {
   return (this.indexOf(string) === 0);
 };
 
 const HomeContainer = React.createClass({
 
-      PropTypes: {
+  PropTypes: {
 
-      },
+  },
 
-      getInitialState() {
-        return {
-          colnames: [],
-        };
-      },
+  getInitialState() {
+    return {
+      colnames: [],
+    };
+  },
 
-      handleWatch(event) {
-        event.preventDefault();
+  handleWatch(event) {
+    event.preventDefault();
 
-        var file = event.target.files[0];
-        if (!file) {
-          return;
-        }
+    const file = event.target.files[0];
+    if (!file) {
+      return;
+    }
 
-        var reader = new FileReader();
-        reader.readAsText(file, 'UTF-8');
-        var self = this;
+    const reader = new FileReader();
+    reader.readAsText(file, 'UTF-8');
 
-        reader.onload = function(e) {
-            var content = e.target.result;
-            var lines = content.split('\n');
+    const self = this;
 
-            // get the column names
-            var colnames = scrapeColumnNames(lines);
+    reader.onload = function(e) {
+        const content = e.target.result;
+        const lines = content.split('\n');
 
-            // post colnames, set state
-            var self = this;
-            postColnames(colnames).then((response) => {
-                console.log(response);
-                self.setState({
-                  colnames: colnames,
-                });
-              })
-              .catch((response) => {
-                console.log(response);
-              });
+        // get the column names
+        const colnames = scrapeColumnNames(lines);
+        self.setState({
+          colnames: colnames,
+        });
 
-          // post content, line by line
-          lines.filter((line) => {
+        // POST colnames (creates db), set state
+        postDatabaseCreate(colnames).then((response) => {
+            // console.log(response);
+          })
+          .catch((response) => {
+            console.log(response);
+          });
+
+
+        // POST content, line by line
+        lines.filter((line) => {
             return !line.beginsWith('#');
           }) //
           .slice(1, lines.length) // skip line with colnames
           .map((line, i) => {
+            const row = line.split(/\s+/);
+            const rowMap = makeRowMap(self.state.colnames, row);
 
-          var row = line.split(/\s+/);
-
-                console.log(row);
-
+            postDatabaseInsert(rowMap).then((response) => {
+                //  console.log(response);
+              })
+              .catch((response) => {
+                console.log(response);
+              });
           });
 
 
 
-          } //END: onLoad
-      },
+      } //END: onLoad
+  },
 
-      render() {
+  render() {
     return (
       <div className = {container}>
-             <WatchLog handleClick={this.handleWatch}/>
+        <WatchLog handleClick = {this.handleWatch}/>
       </div>
     );
   }

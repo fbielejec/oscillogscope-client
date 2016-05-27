@@ -1,5 +1,17 @@
+
+/**
+ * @fbielejec
+ */
+
+//---MODULE CONSTANTS---//
+
+ const ILLEGAL_CHARACTER = ".";
+ const SUBSTITUTE_CHARACTER = "_";
+
+//---MODULE EXPORTS---//
+
 function scrapeColumnNames(lines) {
-  var colnames = lines.filter((line) => {
+  const colnames = lines.filter((line) => {
     return !line.beginsWith('#');
   })[0].split(/\s+/).map((name) => {
     return name.replace(ILLEGAL_CHARACTER, SUBSTITUTE_CHARACTER);
