@@ -11,9 +11,13 @@
 //---MODULE EXPORTS---//
 
 function scrapeColumnNames(lines) {
-  const colnames = lines.filter((line) => {
-    return !line.beginsWith('#');
-  })[0].split(/\s+/).map((name) => {
+  const colnames =
+  lines
+  // .filter((line) => {
+  //   return !line.beginsWith('#');
+  // })[0]
+  .split(/\s+/)
+  .map((name) => {
     return name.replace(ILLEGAL_CHARACTER, SUBSTITUTE_CHARACTER);
   });
 

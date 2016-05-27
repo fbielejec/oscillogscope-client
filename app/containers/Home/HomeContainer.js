@@ -37,41 +37,46 @@ const HomeContainer = React.createClass({
 
     const self = this;
 
-    reader.onload = function(e) {
-        const content = e.target.result;
-        const lines = content.split('\n');
+    reader.onload = async function(e) {
+      const content = e.target.result;
 
-        // get the column names
-        const colnames = scrapeColumnNames(lines);
-        self.setState({
-          colnames: colnames,
+      // skip commented lines
+      const lines = content.split('\n').filter((line) => {
+        return !line.beginsWith('#');
+      });
+
+      // get the column names
+      const colnames = scrapeColumnNames(lines[0]);
+      self.setState({
+        colnames: colnames,
+      });
+
+      // get values
+      const values = lines
+        .slice(1, lines.length - 1);
+
+      // POST colnames (creates db), set state
+    await postDatabaseCreate(colnames).then((response) => {
+          // console.log(response);
+        })
+        .catch((response) => {
+          console.log(response);
         });
 
-        // POST colnames (creates db), set state
-        postDatabaseCreate(colnames).then((response) => {
-            // console.log(response);
+
+
+
+      values.map((line, i) => {
+        const row = line.split(/\s+/);
+        const rowMap = makeRowMap(self.state.colnames, row);
+        postDatabaseInsert(rowMap).then((response) => {
+            //  console.log(response);
           })
           .catch((response) => {
             console.log(response);
           });
+      });
 
-
-        // POST content, line by line
-        lines.filter((line) => {
-            return !line.beginsWith('#');
-          }) //
-          .slice(1, lines.length) // skip line with colnames
-          .map((line, i) => {
-            const row = line.split(/\s+/);
-            const rowMap = makeRowMap(self.state.colnames, row);
-
-            postDatabaseInsert(rowMap).then((response) => {
-                //  console.log(response);
-              })
-              .catch((response) => {
-                console.log(response);
-              });
-          });
 
 
 
