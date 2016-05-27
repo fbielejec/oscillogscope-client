@@ -2,8 +2,9 @@ import React, {PropTypes} from 'react';
 import { container } from './styles.css'
 
 import {WatchLog} from 'components';
-import {rootURL, postDatabaseCreate, postDatabaseInsert} from 'helpers/server';
+import {rootURL, postDatabaseCreate, postDatabaseInsert, getDatabaseData} from 'helpers/server';
 import {scrapeColumnNames, makeRowMap} from 'helpers/utils';
+
 /**
  * @fbielejec
  */
@@ -21,6 +22,8 @@ const HomeContainer = React.createClass({
   getInitialState() {
     return {
       colnames: [],
+      dataLoaded: false,
+      json : {},
     };
   },
 
@@ -56,15 +59,12 @@ const HomeContainer = React.createClass({
         .slice(1, lines.length - 1);
 
       // POST colnames (creates db), set state
-    await postDatabaseCreate(colnames).then((response) => {
+     await postDatabaseCreate(colnames).then((response) => {
           // console.log(response);
         })
         .catch((response) => {
-          console.log(response);
+          // console.log(response);
         });
-
-
-
 
       values.map((line, i) => {
         const row = line.split(/\s+/);
@@ -73,12 +73,22 @@ const HomeContainer = React.createClass({
             //  console.log(response);
           })
           .catch((response) => {
-            console.log(response);
+            // console.log(response);
           });
       });
 
+      // fetch server response with data
+      await getDatabaseData().then(function(response) {
 
+         const json = response.data;
+         self.setState({
+           dataLoaded: true,
+           json : json,
+         });
 
+     }).catch(function(response) {
+         console.log(response);
+     });
 
       } //END: onLoad
   },
@@ -86,7 +96,12 @@ const HomeContainer = React.createClass({
   render() {
     return (
       <div className = {container}>
+
+
         <WatchLog handleClick = {this.handleWatch}/>
+
+
+
       </div>
     );
   }

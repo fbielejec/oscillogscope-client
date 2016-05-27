@@ -16,4 +16,9 @@ function postDatabaseInsert(rowmap) {
   });
 }
 
-export { rootURL, postDatabaseCreate, postDatabaseInsert };
+function getDatabaseData( ) {
+  const API_CONTEXT = "/database/data";
+  return axios.get(rootURL + API_CONTEXT);
+}
+
+export { rootURL, postDatabaseCreate, postDatabaseInsert, getDatabaseData };

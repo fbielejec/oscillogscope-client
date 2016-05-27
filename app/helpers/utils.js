@@ -1,25 +1,19 @@
-
 /**
  * @fbielejec
  */
 
 //---MODULE CONSTANTS---//
 
- const ILLEGAL_CHARACTER = ".";
- const SUBSTITUTE_CHARACTER = "_";
+const ILLEGAL_CHARACTER = ".";
+const SUBSTITUTE_CHARACTER = "_";
 
 //---MODULE EXPORTS---//
 
 function scrapeColumnNames(lines) {
-  const colnames =
-  lines
-  // .filter((line) => {
-  //   return !line.beginsWith('#');
-  // })[0]
-  .split(/\s+/)
-  .map((name) => {
-    return name.replace(ILLEGAL_CHARACTER, SUBSTITUTE_CHARACTER);
-  });
+  const colnames = lines.split(/\s+/)
+    .map((name) => {
+      return name.replace(ILLEGAL_CHARACTER, SUBSTITUTE_CHARACTER);
+    });
 
   return colnames;
 }
