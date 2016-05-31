@@ -30,7 +30,6 @@ const HomeContainer = React.createClass({
       data : [],
     };
   },
-
 handleWatch2(event) {
   event.preventDefault();
   const file = event.target.files[0];
@@ -61,10 +60,10 @@ handleWatch2(event) {
 
           // POST colnames (creates db), set state
           await postDatabaseCreate(colnames).then((response) => {
-              // console.log(response);
+              console.log(response);
             })
             .catch((response) => {
-              // console.log(response);
+              console.log(response);
             });
 
           self.setState({
@@ -84,15 +83,29 @@ handleWatch2(event) {
             const row = line.split(/\s+/);
             const rowMap = makeRowMap(self.state.colnames, row);
             postDatabaseInsert(rowMap).then((response) => {
-                //  console.log(response);
+                console.log(response);
               })
               .catch((response) => {
-                // console.log(response);
+                console.log(response);
               });
           });
 
           self.setState({
             linesSent: (self.state.linesSent + values.length),
+          });
+
+          // TODO: get EXTRA data, not all
+          // fetch server response with data
+          await getDatabaseData().then(function(response) {
+
+            const json = response.data;
+            self.setState({
+              dataLoaded: true,
+              data: json.data,
+            });
+
+          }).catch(function(response) {
+            console.log(response);
           });
 
         } //END: nLines check
@@ -104,9 +117,7 @@ handleWatch2(event) {
 
   }, 1500);
 
-
 },
-
 
 //   handleWatch(event) {
 //     event.preventDefault();

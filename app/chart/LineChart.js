@@ -11,7 +11,7 @@ values: PropTypes.object.isRequired,
     return (
       <div>
         <h1> {this.props.name} </h1>
-      {/*<pre> {JSON.stringify(this.props.values, 2, ' ')} </pre>*/}
+      <pre> {JSON.stringify(this.props.values, 2, ' ')} </pre>
       </div>
     );
   }
