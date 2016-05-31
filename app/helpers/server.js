@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-var rootURL = "http://localhost:8080";
+const rootURL = "http://localhost:8080";
 
 function postDatabaseCreate(colnames) {
   const API_CONTEXT = "/database/create";
