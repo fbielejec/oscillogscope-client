@@ -16,9 +16,14 @@ function postDatabaseInsert(rowmap) {
   });
 }
 
-function getDatabaseData( ) {
-  const API_CONTEXT = "/database/data";
+function getDatabaseDataLastN(n) {
+  const API_CONTEXT = "/database/data/" + n ;
   return axios.get(rootURL + API_CONTEXT);
 }
 
-export { rootURL, postDatabaseCreate, postDatabaseInsert, getDatabaseData };
+function getDatabaseDataAll( ) {
+  const API_CONTEXT = "/database/data/all";
+  return axios.get(rootURL + API_CONTEXT);
+}
+
+export { rootURL, postDatabaseCreate, postDatabaseInsert, getDatabaseDataAll, getDatabaseDataLastN };

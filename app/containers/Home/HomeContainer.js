@@ -3,7 +3,7 @@ import { container } from './styles.css'
 
 import LineChart from 'chart/LineChart'
 import {WatchLog} from 'components';
-import {rootURL, postDatabaseCreate, postDatabaseInsert, getDatabaseData} from 'helpers/server';
+import {rootURL, postDatabaseCreate, postDatabaseInsert, getDatabaseDataLastN} from 'helpers/server';
 import {scrapeColumnNames, makeRowMap} from 'helpers/utils';
 
 
@@ -18,10 +18,10 @@ String.prototype.beginsWith = function(string) {
 
 const HomeContainer = React.createClass({
 
-  PropTypes: {
+PropTypes: {
   },
 
-  getInitialState() {
+getInitialState() {
     return {
       colnames: [],
       dbCreated: false,
@@ -30,28 +30,71 @@ const HomeContainer = React.createClass({
       data : [],
     };
   },
+
+//---TEST---//////////////////
+
 handleWatch2(event) {
+
   event.preventDefault();
   const file = event.target.files[0];
   if (!file) {
     return;
   }
 
+ const reader = new FileReader();
+
+    setInterval(() => {
+
+     reader.onload = async function(e) {
+         const content = e.target.result;
+
+         const lines = content.split('\n').filter((line) => {
+           return !line.beginsWith('#') && !(line === "");
+         });
+         const nLines = lines.length - 1;
+
+   console.log("number of lines in file: " + nLines);
+
+       } // onLoad
+            reader.readAsText(file, 'UTF-8');
+
+    }, 1500);
+
+},
+
+/////////////////////
+
+
+handleWatch(event) {
+
+  event.preventDefault();
+  const file = event.target.files[0];
+  if (!file) {
+    return;
+  }
+
+// clear state
+this.setState(this.getInitialState());
+
   const self = this;
 
   //  check for new file content every interval
   setInterval(() => {
 
-    var reader = new FileReader();
+     var reader = new FileReader();
     reader.readAsText(file, 'UTF-8');
 
     reader.onload = async function(e) {
-        var content = e.target.result;
+        const content = e.target.result;
+
+console.log("ROLLING");
 
         // skip commented lines
         const lines = content.split('\n').filter((line) => {
-          return !line.beginsWith('#');
+          return !line.beginsWith('#') && !(line === "");
         });
+        const nLines = lines.length - 1;
+
 
         if (!self.state.dbCreated) {
 
@@ -72,17 +115,19 @@ handleWatch2(event) {
           });
         } //END: dbCreated check
 
-        // post all extra lines, skip column lines
-        const nLines = lines.length - 1;
-        if (nLines > self.state.linesSent) {
+        // post all new lines
+        if (nLines > self.state.linesSent ) {
+
+        // console.log((nLines - self.state.linesSent ) + " new lines detected");
 
           const from = 1 + self.state.linesSent;
-          const values = lines.slice(from, lines.length - 1);
+          const to = nLines + 1;
+          const values = lines.slice(from, to);
 
           values.map((line, i) => {
             const row = line.split(/\s+/);
             const rowMap = makeRowMap(self.state.colnames, row);
-            postDatabaseInsert(rowMap).then((response) => {
+              postDatabaseInsert(rowMap).then((response) => {
                 console.log(response);
               })
               .catch((response) => {
@@ -94,9 +139,8 @@ handleWatch2(event) {
             linesSent: (self.state.linesSent + values.length),
           });
 
-          // TODO: get EXTRA data, not all
-          // fetch server response with data
-          await getDatabaseData().then(function(response) {
+          // fetch server response with last n rows of data
+          await getDatabaseDataLastN(values.length).then(function(response) {
 
             const json = response.data;
             self.setState({
@@ -109,89 +153,10 @@ handleWatch2(event) {
           });
 
         } //END: nLines check
-
-        //TODO
-        console.log("Lines in DB: " + self.state.linesSent);
-
       } //END: onload
 
   }, 1500);
-
 },
-
-//   handleWatch(event) {
-//     event.preventDefault();
-//
-//     const file = event.target.files[0];
-//     if (!file) {
-//       return;
-//     }
-//
-//     const reader = new FileReader();
-//     reader.readAsText(file, 'UTF-8');
-//     const self = this;
-//
-//     reader.onload = async function(e) {
-//       const content = e.target.result;
-//
-//       // skip commented lines
-//       const lines = content.split('\n').filter((line) => {
-//         return !line.beginsWith('#');
-//       });
-//
-//       // get the column names
-//       const colnames = scrapeColumnNames(lines[0]);
-//       self.setState({
-//         colnames: colnames,
-//       });
-//
-//       // get values
-//       const values = lines
-//         .slice(1, lines.length - 1);
-//
-//
-//
-//       // POST colnames (creates db), set state
-//      await postDatabaseCreate(colnames).then((response) => {
-//           // console.log(response);
-//         })
-//         .catch((response) => {
-//           // console.log(response);
-//         });
-//
-//       values.map((line, i) => {
-//         const row = line.split(/\s+/);
-//         const rowMap = makeRowMap(self.state.colnames, row);
-//         postDatabaseInsert(rowMap).then((response) => {
-//             //  console.log(response);
-//           })
-//           .catch((response) => {
-//             // console.log(response);
-//           });
-//       });
-//
-//       // fetch server response with data
-//       await getDatabaseData().then(function(response) {
-//
-//          const json = response.data;
-//
-//          self.setState({
-//            dataLoaded: true,
-//            linesSent: values.length,
-//            data : json.data,
-//          });
-//
-//      }).catch(function(response) {
-//          console.log(response);
-//      });
-//
-// //TODO
-// console.log("Lines in DB: " + self.state.linesSent);
-//
-//       } //END: onLoad
-//
-//
-//   },
 
 makeLine(line) {
   return (
